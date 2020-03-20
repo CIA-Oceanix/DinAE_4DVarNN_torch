@@ -41,7 +41,28 @@ class ConstrainedConv2d(torch.nn.Conv2d):
 #  inputs = torch.randn(1,1,28,28)
 #  y = conv1(torch.autograd.Variable(inputs))
 #  print(conv1.weight[:,0,2,2])
-        
+  
+## ResNet architecture (Conv2d)      
+class ResNetConv2D(torch.nn.Module):
+  def __init__(self,Nblocks,dim,K,
+                 kernel_size,
+                 padding=0):
+      super(ResNetConv2D, self).__init__()
+      self.resnet = self._make_ResNet(Nblocks,dim,K,kernel_size,padding)
+
+  def _make_ResNet(self,Nblocks,dim,K,kernel_size,padding):
+      layers = []
+      for kk in range(0,Nblocks):
+        layers.append(torch.nn.Conv2d(dim,K*dim,kernel_size,padding=padding,bias=False))
+        layers.append(torch.nn.Conv2d(K*dim,dim,kernel_size,padding=padding,bias=False))
+
+      return torch.nn.Sequential(*layers)
+
+
+  def forward(self, x):
+      x = self.resnet ( x )
+
+      return x
         
 # Pytorch ConvLSTM2D
 class ConvLSTM2d(torch.nn.Module):
