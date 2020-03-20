@@ -188,11 +188,12 @@ class Model_AE_GradFP(torch.nn.Module):
         super(Model_AE_GradFP, self).__init__()
         self.model_AE = mod_AE
 
-        self.GradType = GradType
-        self.OptimType = OptimType
-        self.NProjFP   = int(NiterProjection)
-        self.NGrad     = int(NiterGrad)
-        self.shape     = ShapeData
+        with torch.no_grad():
+            self.GradType = GradType
+            self.OptimType = OptimType
+            self.NProjFP   = int(NiterProjection)
+            self.NGrad     = int(NiterGrad)
+            self.shape     = ShapeData
         
         if len(self.shape) == 2: ## 1D Data
             if self.OptimType == 0: # fixed-step gradient descent
