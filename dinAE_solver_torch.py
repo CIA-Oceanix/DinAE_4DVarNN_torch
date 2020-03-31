@@ -74,6 +74,7 @@ class ResNetConv2D(torch.nn.Module):
       layers = []
       for kk in range(0,Nblocks):
         layers.append(torch.nn.Conv2d(dim,K*dim,kernel_size,padding=padding,bias=False))
+        layers.append(torch.nn.ReLU())
         layers.append(torch.nn.Conv2d(K*dim,dim,kernel_size,padding=padding,bias=False))
 
       return torch.nn.Sequential(*layers)
@@ -261,7 +262,11 @@ class Model_AE_GradFP(torch.nn.Module):
               grad = torch.add(self.model_AE(x),-1.,x)
             else: ## true gradient using autograd
               loss = torch.sum( torch.add(self.model_AE(x),-1.,x)**2 )
-              grad = torch.autograd.grad(loss,x)[0]
+              #grad = torch.autograd.grad(loss,x)[0]
+              grad = torch.autograd.grad(loss,x,create_graph=True)[0]
+            #grad = grad.view(-1,1,self.shape[1],self.shape[2])
+            #print(grad.requires_grad)
+            #print()
             #grad = grad.view(-1,1,self.shape[1],self.shape[2])
             grad.retain_grad()
 
