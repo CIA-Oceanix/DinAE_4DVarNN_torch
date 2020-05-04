@@ -426,25 +426,27 @@ class model_GradUpdate2(torch.nn.Module):
 # solving the reconstruction of the hidden states using a number of 
 # fixed-point iterations prior to a gradient-based minimization
 class Model_4DVarNN_GradFP(torch.nn.Module):
-    def __init__(self,mod_AE,ShapeData,NiterProjection,NiterGrad,GradType,OptimType,InterpFlag=False):
+    def __init__(self,mod_AE,ShapeData,NiterProjection,NiterGrad,GradType,OptimType,InterpFlag=False,periodicBnd=False):
     #def __init__(self,mod_AE,GradType,OptimType):
         super(Model_4DVarNN_GradFP, self).__init__()
 
         self.model_AE = mod_AE
-        if OptimType == 0:
-          self.model_Grad = model_GradUpdate0(ShapeData,GradType)
-        elif OptimType == 1:
-          self.model_Grad = model_GradUpdate1(ShapeData,GradType)
-        elif OptimType == 2:
-          self.model_Grad = model_GradUpdate2(ShapeData,GradType)
-    
+
         with torch.no_grad():
             print('Opitm type %d'%OptimType)
             self.OptimType = OptimType
             self.NProjFP   = int(NiterProjection)
             self.NGrad     = int(NiterGrad)
-            self.InterpFlag = InterpFlag
-            
+            self.InterpFlag  = InterpFlag
+            self.periodicBnd = periodicBnd
+
+        if OptimType == 0:
+          self.model_Grad = model_GradUpdate0(ShapeData,GradType)
+        elif OptimType == 1:
+          self.model_Grad = model_GradUpdate1(ShapeData,GradType,self.periodicBnd)
+        elif OptimType == 2:
+          self.model_Grad = model_GradUpdate2(ShapeData,GradType,self.periodicBnd)
+                
     def forward(self, x_inp,xobs,mask,g1=None,g2=None):
         mask_  = torch.add(1.0,torch.mul(mask,-1.0)) #1. - mask
         
@@ -531,20 +533,21 @@ class Model_4DVarNN_FP(torch.nn.Module):
 # solving the reconstruction of the hidden states using a number of 
 # fixed-point iterations prior to a gradient-based minimization
 class Model_4DVarNN_Grad(torch.nn.Module):
-    def __init__(self,mod_AE,ShapeData,NiterGrad,GradType,OptimType,InterpFlag=False):
+    def __init__(self,mod_AE,ShapeData,NiterGrad,GradType,OptimType,InterpFlag=False,periodicBnd=False):
     #def __init__(self,mod_AE,GradType,OptimType):
         super(Model_4DVarNN_Grad, self).__init__()
         self.model_AE = mod_AE
         self.OptimType = OptimType
         self.GradType  = GradType
         self.InterpFlag = InterpFlag
+        self.periodicBnd = periodicBnd
         
         if OptimType == 0:
           self.model_Grad = model_GradUpdate0(ShapeData,GradType)
         elif OptimType == 1:
-          self.model_Grad = model_GradUpdate1(ShapeData,GradType)
+          self.model_Grad = model_GradUpdate1(ShapeData,GradType,self.periodicBnd)
         elif OptimType == 2:
-          self.model_Grad = model_GradUpdate2(ShapeData,GradType)
+          self.model_Grad = model_GradUpdate2(ShapeData,GradType,self.periodicBnd)
             
         
         with torch.no_grad():
