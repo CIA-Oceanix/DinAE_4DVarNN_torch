@@ -1,6 +1,0 @@
-# List of ideas to be tested
-- Extension to noisy data (under development)
-- Multi-resolution/Multi-grid solver (cf. algo used in MRF)
-- NN based on an ADMM solver
-- Adding a variance model for the inference of the posterior likelihood
-- Introduction of Hamiltonian representation
