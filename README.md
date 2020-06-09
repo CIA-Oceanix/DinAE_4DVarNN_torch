@@ -1,6 +1,7 @@
 # Pytorch code for the joint learning of variational models and associated solvers
 
 Associated preprint: https://arxiv.org/abs/2006.03653
+
 Content of the repository:
 - Directory TrainedModels: trained models for reproducing MNIST and Lorenz-96 results reported in the preprint
 - Notebooks notebookPyTorch_VarModelNN_*_Preprint2020: notebooks to repdoduce the results and figures in the preprint
